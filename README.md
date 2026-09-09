@@ -1,62 +1,62 @@
 # Loxone Buderus KM200 Bridge
 
 <!-- project-meta -->
-> **Status:** Stable · **Current release:** `v1.0.0` · **License:** MIT · **Documentation:** Deutsch · **Issues/PRs:** Deutsch or English
+> **Status:** Stable · **Current release:** `v1.0.0` · **License:** MIT · **Documentation:** English · **Issues/PRs:** English preferred
 
-[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Loxone-Doku](docs/loxone.md) · [Troubleshooting](docs/troubleshooting.md) · [Project collection](https://github.com/therealb4n4na/loxone-smart-home-projects)
+[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Loxone integration](docs/loxone.md) · [Troubleshooting](docs/troubleshooting.md) · [Project collection](https://github.com/therealb4n4na/loxone-smart-home-projects)
 <!-- /project-meta -->
 
-Lokale Python-Bridge zwischen einem Buderus/Bosch KM200 Gateway und Loxone. Die Bridge liest ausgewählte Heizungs- und Warmwasserwerte zyklisch aus, stellt sie über HTTP bereit und erlaubt bewusst nur wenige, verifizierte Schreiboperationen.
+A local Python bridge between a Buderus/Bosch KM200 gateway and Loxone. It periodically reads selected heating and domestic-hot-water values, exposes them through a compact HTTP API, and deliberately supports only a limited set of verified write operations.
 
-## Ziele
+## Goals
 
-- KM200 lokal auslesen
-- Daten für Loxone vereinfachen
-- Schreibzugriffe auf klar definierte Funktionen beschränken
-- jeden Schreibbefehl durch Rücklesen verifizieren
-- Gateway-Ausfall und Bridge-Ausfall getrennt darstellen
-- ausgewählte Werte lokal historisieren
+- read KM200 data locally
+- simplify selected values for Loxone
+- restrict write access to explicitly supported functions
+- verify every supported write by reading the target value back
+- distinguish bridge failure from gateway failure
+- optionally store selected values in a local history database
 
-## Architektur
+## Architecture
 
 ```text
-Buderus WPS / KM200
+Buderus heating system / KM200
         │
-        │ verschlüsselte KM200-Kommunikation
+        │ encrypted KM200 communication
         ▼
 bridge.py :8095
-  ├─ zyklischer Poll
-  ├─ Cache
-  ├─ Loxone-Ausgabe
-  ├─ kontrollierte Writes
-  └─ History-API
+  ├─ periodic polling
+  ├─ state cache
+  ├─ compact Loxone output
+  ├─ controlled writes
+  └─ history API
         │
         ├────────────> Loxone
         │
-        └─ logger.py -> SQLite-History
+        └─ logger.py -> SQLite history
 ```
 
-Dieses Projekt ist vom separaten Rego1000/CAN-Projekt unabhängig. Die KM200-Bridge verwendet ausschließlich das Netzwerk-Gateway.
+This project is independent of any separate Rego1000/CAN reverse-engineering work. The KM200 bridge communicates only through the network gateway.
 
-## Voraussetzungen
+## Requirements
 
-- Linux, getestet auf DietPi/Debian
+- Linux; developed and tested on DietPi / Debian
 - Python 3
-- ein im LAN erreichbares KM200
-- KM200 private key/token und das zugehörige Passwort
+- a KM200 reachable on the local network
+- the KM200 private key/token and associated password
 - optional Loxone Miniserver
 
-## Konfiguration
+## Configuration
 
-Die produktive Konfiguration liegt außerhalb des Repositorys unter:
+The production configuration is stored outside the repository, for example:
 
 ```text
 /etc/buderus-km200.json
 ```
 
-Vorlage: [`config.example.json`](config.example.json)
+Template: [`config.example.json`](config.example.json)
 
-Beispielstruktur:
+Example structure:
 
 ```json
 {
@@ -70,32 +70,32 @@ Beispielstruktur:
 }
 ```
 
-Die echte Datei darf nicht veröffentlicht werden.
+Never publish the real configuration file.
 
-## Aktuell genutzte Datenpunkte
+## Currently used data points
 
-Die Bridge liest unter anderem:
+The bridge reads values such as:
 
-- Gateway-Zeit
-- Außentemperatur
-- Warmwasser Ist-Temperatur
-- Warmwasser Soll-Temperatur
-- Warmwasser-Betriebsart/Programm
-- Extra-Warmwasser Stopptemperatur
-- Extra-Warmwasser Dauer
-- Heizkreis 1 Betriebsart und ausgewählte Sollwerte
+- gateway time
+- outdoor temperature
+- actual domestic-hot-water temperature
+- DHW target temperature
+- DHW operating mode/program
+- extra-DHW stop temperature
+- extra-DHW duration
+- heating-circuit 1 operating mode and selected setpoints
 
-Welche Endpunkte auf einem konkreten Buderus-System existieren, hängt von Regler, Anlage und Firmware ab.
+Available resources depend on the heating controller, system configuration, and firmware.
 
-## HTTP-API
+## HTTP API
 
-### Vollständiger Bridge-Status
+### Full bridge status
 
 ```text
 GET http://<HOST>:8095/status
 ```
 
-### Kompakte Loxone-Ausgabe
+### Compact Loxone output
 
 ```text
 GET http://<HOST>:8095/loxone
@@ -107,7 +107,7 @@ GET http://<HOST>:8095/loxone
 GET http://<HOST>:8095/health
 ```
 
-Wichtig: Ein laufender Python-Prozess ist nicht dasselbe wie ein erreichbares KM200. Deshalb enthält die Bridge getrennte Informationen wie `bridge_ok`, `gateway_online`, `poll_errors` und `age_s`.
+A running Python process is not the same as a reachable KM200. The bridge therefore exposes separate indicators such as `bridge_ok`, `gateway_online`, `poll_errors`, and `age_s`.
 
 ### History
 
@@ -115,54 +115,54 @@ Wichtig: Ein laufender Python-Prozess ist nicht dasselbe wie ein erreichbares KM
 GET http://<HOST>:8095/history/dhw?hours=72&step=5
 ```
 
-Die History wird vom separaten `logger.py` in SQLite geschrieben und über die Bridge lesbar gemacht.
+History data is written by the separate `logger.py` process to SQLite and exposed read-only through the bridge.
 
-## Schreiboperationen
+## Write operations
 
-Die Bridge unterstützt bewusst nur definierte, getestete Schreibpfade, darunter:
+The bridge intentionally supports only defined, tested write paths, including selected operations for:
 
-- Warmwasser-Solltemperatur
-- Warmwasser-Betriebsart
-- Extra-Warmwasser
-- Heizkreis-1-Betriebsart
+- DHW target temperature
+- DHW operating mode
+- extra DHW
+- heating-circuit 1 operating mode
 
-Schreibzugriffe werden auf die konfigurierte `write_client_ip` begrenzt. Nach einem PUT liest die Bridge den Zielwert erneut ein. Erst wenn Soll und Ist zusammenpassen, gilt der Befehl als bestätigt.
+Write requests are restricted to the configured `write_client_ip`. After a PUT, the bridge reads the target resource again. The command is considered successful only when the requested and actual values match.
 
-## Warum Schreibverifikation?
+## Why verify writes?
 
-Bei Heizungssteuerungen ist ein HTTP-Erfolg allein nicht ausreichend. Ein Gateway kann einen Request entgegennehmen, obwohl ein Wert nicht wie erwartet übernommen wurde. Deshalb folgt auf jeden vorgesehenen Write ein Readback.
+For heating controls, an HTTP success response alone is not sufficient proof that a value was actually accepted. A gateway may accept a request while the underlying controller rejects or normalizes the value. Readback verification makes that distinction visible.
 
-## History Logger
+## History logger
 
-`logger.py` fragt zyklisch den lokalen `/status`-Endpunkt ab und speichert Snapshots in SQLite.
+`logger.py` periodically reads the bridge's local `/status` endpoint and stores snapshots in SQLite.
 
-Der früher in diesem privaten Setup verwendete DS18B20-Zirkulationssensor ist im aktuellen Logger bewusst deaktiviert. Die historische Datenbankspalte bleibt aus Kompatibilitätsgründen bestehen.
+The generic public logger does not require an external temperature sensor. Existing database columns from older installations may remain for compatibility without being populated.
 
 ## systemd
 
-Typisch sind zwei dauerhafte Units:
+A typical installation uses two long-running units:
 
 ```text
 buderus-km200-bridge.service
 buderus-km200-logger.service
 ```
 
-Der Logger sollte nach der Bridge starten, darf aber auch einen kurzfristig noch nicht erreichbaren lokalen Endpunkt überleben.
+The logger should start after the bridge, but it should also tolerate the local bridge endpoint being temporarily unavailable after boot.
 
 ## Loxone
 
-Loxone sollte für die Visualisierung bevorzugt `/loxone` verwenden. Schreibbefehle nur gezielt über die dafür vorgesehenen Endpunkte senden.
+For visualization, Loxone should normally use `/loxone`. Send write commands only through explicitly supported endpoints.
 
-Mehr dazu: [`docs/loxone.md`](docs/loxone.md).
+See [`docs/loxone.md`](docs/loxone.md).
 
-## Fehlersuche
+## Troubleshooting
 
-Siehe [`docs/troubleshooting.md`](docs/troubleshooting.md).
+See [`docs/troubleshooting.md`](docs/troubleshooting.md).
 
-## Sicherheits- und Haftungshinweis
+## Safety notice
 
-Dieses Projekt kann Sollwerte einer Heizungsanlage verändern. Vor Verwendung müssen Endpunkte und Werte am eigenen System geprüft werden. Sicherheitsfunktionen des Heizungsreglers dürfen nicht umgangen werden. Änderungen erfolgen auf eigenes Risiko.
+This project can modify heating-system setpoints. Verify resources and allowed values on your own installation before enabling writes. Do not bypass safety functions implemented by the heating controller. Use at your own risk.
 
-## Lizenz
+## License
 
-MIT License – siehe [`LICENSE`](LICENSE).
+MIT License – see [`LICENSE`](LICENSE).

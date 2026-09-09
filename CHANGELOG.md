@@ -1,20 +1,20 @@
 # Changelog
 
-Alle nennenswerten Änderungen an diesem Projekt werden hier dokumentiert.
-Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/) und die Versionierung an [Semantic Versioning](https://semver.org/).
+All notable changes to this project are documented here.
+The format is based on [Keep a Changelog](https://keepachangelog.com/) and the project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Noch keine unveröffentlichten Änderungen.
+- Standardized the public documentation and issue templates in English.
 
 ## [1.0.0] - 2026-09-09
 
 ### Added
 
-- Erster dokumentierter öffentlicher Release-Stand.
-- Buderus/Bosch KM200 status, selected verified writes and local DHW/history logging.
-- Beispielkonfigurationen ohne produktive Zugangsdaten.
-- Loxone- und Troubleshooting-Dokumentation.
-- MIT-Lizenz.
+- First documented public release.
+- Buderus/Bosch KM200 status, selected verified writes, and local DHW/history logging.
+- Example configuration without production credentials.
+- Loxone integration and troubleshooting documentation.
+- MIT License.

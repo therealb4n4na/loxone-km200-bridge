@@ -1,46 +1,46 @@
-# Loxone-Einbindung
+# Loxone integration
 
-## Lesen
+## Reading values
 
-Für die normale Visualisierung sollte Loxone den kompakten Endpunkt verwenden:
+For normal visualization, use the compact endpoint:
 
 ```text
 http://<DIETPI-IP>:8095/loxone
 ```
 
-Der ausführliche `/status`-Endpunkt ist für Diagnose und Entwicklung gedacht.
+The full `/status` endpoint is intended mainly for diagnostics and development.
 
-Ein Polling-Intervall von etwa 30–60 Sekunden ist für die meisten Heizungswerte sinnvoll.
+A polling interval of roughly 30–60 seconds is reasonable for most heating values.
 
-## Zustandsbewertung
+## Evaluating communication health
 
-Nicht nur einzelne Temperaturen auswerten. Für die Kommunikationsqualität sind insbesondere relevant:
+Do not evaluate individual temperatures alone. Important communication indicators include:
 
 - `bridge_ok`
 - `gateway_online`
 - `poll_errors`
 - `age_s`
 
-Damit lässt sich unterscheiden zwischen:
+Together they let you distinguish between:
 
-1. Bridge-Prozess ausgefallen,
-2. Bridge läuft, KM200 aber nicht erreichbar,
-3. Daten vorhanden, aber veraltet,
-4. normalem Betrieb.
+1. the bridge process being unavailable,
+2. the bridge running while the KM200 is unreachable,
+3. data being present but stale,
+4. normal operation.
 
-## Schreiben
+## Writing values
 
-Schreibbefehle sollten nur aus bewusst aufgebauten Loxone-Logiken kommen. Die Bridge begrenzt Writes zusätzlich auf `write_client_ip`.
+Write requests should only originate from deliberate Loxone logic. The bridge additionally restricts writes to `write_client_ip`.
 
-Nach Möglichkeit keine dauernden Sollwert-Wiederholungen senden. Nur bei einer tatsächlichen Zustandsänderung schreiben.
+Avoid continuously re-sending the same setpoint. Write only when the requested state actually changes.
 
-## Extra-Warmwasser
+## Extra DHW
 
-Ein typisches Konzept ist:
+A typical control concept is to:
 
-- normale WW-Solltemperatur separat belassen,
-- Extra-Warmwasser Stopptemperatur konfigurieren,
-- Extra-Warmwasser nur für eine definierte Dauer aktivieren,
-- danach automatisch wieder auf Dauer 0 zurückkehren lassen.
+- keep the normal DHW setpoint separate,
+- configure an extra-DHW stop temperature,
+- enable extra DHW for a defined duration only,
+- return the duration to 0 afterwards.
 
-Die konkreten Temperaturen und Laufzeiten müssen zur jeweiligen Anlage passen.
+Exact temperatures and durations must be chosen for the specific heating system.
