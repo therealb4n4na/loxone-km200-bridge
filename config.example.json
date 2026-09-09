@@ -1,0 +1,9 @@
+{
+  "host": "192.168.1.42",
+  "token": "YOUR_KM200_PRIVATE_KEY_OR_TOKEN",
+  "password": "YOUR_KM200_PASSWORD",
+  "listen_host": "0.0.0.0",
+  "listen_port": 8095,
+  "poll_interval": 30,
+  "write_client_ip": "192.168.1.50"
+}
