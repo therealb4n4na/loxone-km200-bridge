@@ -3,7 +3,7 @@
 <!-- project-meta -->
 > **Status:** Stable · **Current release:** `v1.0.0` · **License:** MIT · **Documentation:** Deutsch · **Issues/PRs:** Deutsch or English
 
-[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Loxone-Doku](docs/loxone.md) · [Troubleshooting](docs/troubleshooting.md)
+[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Loxone-Doku](docs/loxone.md) · [Troubleshooting](docs/troubleshooting.md) · [Project collection](https://github.com/therealb4n4na/loxone-smart-home-projects)
 <!-- /project-meta -->
 
 Lokale Python-Bridge zwischen einem Buderus/Bosch KM200 Gateway und Loxone. Die Bridge liest ausgewählte Heizungs- und Warmwasserwerte zyklisch aus, stellt sie über HTTP bereit und erlaubt bewusst nur wenige, verifizierte Schreiboperationen.
