@@ -1,0 +1,22 @@
+[Unit]
+Description=Buderus KM200 Read-Only Bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=buderus
+Group=buderus
+
+ExecStart=/opt/buderus-km200/.venv/bin/python /opt/buderus-km200/bridge.py
+
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+[Unit]
+Description=Buderus KM200 History Logger
+After=network-online.target buderus-km200-bridge.service
+Wants=network-online.target
+Requires=buderus-km200-bridge.service
+
+[Service]
+Type=simple
+User=buderus
+Group=buderus
+ExecStart=/usr/bin/python3 /opt/buderus-km200/logger.py
+Restart=on-failure
+RestartSec=10
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/buderus-km200-history
+
+[Install]
+WantedBy=multi-user.target
