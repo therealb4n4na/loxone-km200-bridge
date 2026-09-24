@@ -1,5 +1,10 @@
 # Loxone Buderus KM200 Bridge
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python 3](https://img.shields.io/badge/Python-3.x-blue.svg)
+![Platform](https://img.shields.io/badge/Linux-DietPi%20%2F%20Debian-informational.svg)
+![Write model](https://img.shields.io/badge/Writes-readback%20verified-success.svg)
+
 <!-- project-meta -->
 > **Status:** Stable · **Current release:** `v1.0.0` · **License:** MIT · **Documentation:** English · **Issues/PRs:** English preferred
 
@@ -8,7 +13,7 @@
 
 A local Python bridge between a Buderus/Bosch KM200 gateway and Loxone. It periodically reads selected heating and domestic-hot-water values, exposes them through a compact HTTP API, and deliberately supports only a limited set of verified write operations.
 
-## Goals
+## What this project gives you
 
 - read KM200 data locally
 - simplify selected values for Loxone
@@ -37,6 +42,12 @@ bridge.py :8095
 ```
 
 This project is independent of any separate Rego1000/CAN reverse-engineering work. The KM200 bridge communicates only through the network gateway.
+
+## Tested hardware
+
+This project is developed and operated with a **Buderus/Bosch KM200 network gateway** connected to a real heating installation.
+
+The KM200 resource tree depends on the connected controller, system configuration, and firmware. The project therefore exposes only resources and write operations that were explicitly verified instead of assuming that every KM200 installation provides the same endpoints.
 
 ## Requirements
 
