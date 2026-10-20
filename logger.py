@@ -6,7 +6,7 @@ Buderus KM200 History Logger
 Zweck
 -----
 Separater Hintergrunddienst fuer Langzeitdaten. Er fragt alle 60 Sekunden den
-lokalen KM200-Bridge-Endpunkt http://127.0.0.1:8095/status ab und schreibt
+in der KM200-Konfiguration angegebenen Bridge-Endpunkt /status ab und schreibt
 einen Snapshot in SQLite. Der frueher verwendete DS18B20 an der Zirkulations-
 Ruecklaufleitung ist derzeit bewusst deaktiviert und nicht mehr angeschlossen.
 
@@ -44,7 +44,26 @@ import time
 import urllib.request
 from datetime import datetime
 
-URL = "http://127.0.0.1:8095/status"
+CONFIG_FILE = "/etc/buderus-km200.json"
+
+
+def bridge_status_url():
+    """Use the same listener address and port as the KM200 bridge."""
+    with open(CONFIG_FILE, "r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
+
+    host = str(config.get("listen_host", "0.0.0.0")).strip()
+    port = int(config.get("listen_port", 8095))
+    if host in ("", "0.0.0.0", "::"):
+        host = "127.0.0.1"
+    elif ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+    if not (1 <= port <= 65535):
+        raise ValueError("Invalid KM200 bridge listen_port")
+    return f"http://{host}:{port}/status"
+
+
+URL = bridge_status_url()
 DB = "/var/lib/buderus-km200-history/history.sqlite3"
 INTERVAL = 60
 
